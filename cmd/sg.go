@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -57,7 +57,11 @@ var sgCmd = &cobra.Command{
 			for _, securityGroup := range inst.SecurityGroups {
 
 				ipExists := fetchIpsFromSecurityGroup(svc, securityGroup)
-				fmt.Println(ipExists)
+				if !ipExists {
+					AddIPAddressOnSecurityGroup(svc, securityGroup.GroupId)
+				} else {
+					log.Print("WARNING: This IP already has access!")
+				}
 			}
 		}
 	},
@@ -81,6 +85,22 @@ func fetchIpsFromSecurityGroup(svc *ec2.EC2, securityGroup *ec2.GroupIdentifier)
 		}
 	}
 	return ipExists
+}
+
+func AddIPAddressOnSecurityGroup(svc *ec2.EC2, groupID *string) *ec2.AuthorizeSecurityGroupIngressOutput {
+	paramsReq := &ec2.AuthorizeSecurityGroupIngressInput{
+		DryRun:     aws.Bool(false),
+		GroupId:    aws.String(*groupID),
+		CidrIp:     aws.String(IP + "/32"),
+		IpProtocol: aws.String("TCP"),
+		FromPort:   aws.Int64(22),
+		ToPort:     aws.Int64(22),
+	}
+	out, err := svc.AuthorizeSecurityGroupIngress(paramsReq)
+	if err != nil {
+		panic(err)
+	}
+	return out
 }
 
 func init() {
