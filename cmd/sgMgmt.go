@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -10,7 +9,7 @@ import (
 )
 
 // Starts a new AWS session
-func startAWSSession(IP string, Machine string) {
+func InsertIPOnSG(IP string, Machine string) bool {
 	session, err := session.NewSession()
 	if err != nil {
 		panic(err)
@@ -30,17 +29,19 @@ func startAWSSession(IP string, Machine string) {
 	if err != nil {
 		panic(err)
 	}
-	for _, inst := range response.Reservations[0].Instances {
-		for _, securityGroup := range inst.SecurityGroups {
+	if len(response.Reservations) >= 1 {
+		for _, inst := range response.Reservations[0].Instances {
+			for _, securityGroup := range inst.SecurityGroups {
 
-			ipExists := IPExistsOnSecurityGroup(IP, svc, securityGroup)
-			if !ipExists {
-				AddIPAddressOnSecurityGroup(svc, securityGroup.GroupId)
-			} else {
-				log.Print("WARNING: This IP already has access!")
+				ipExists := IPExistsOnSecurityGroup(IP, svc, securityGroup)
+				if !ipExists {
+					AddIPAddressOnSecurityGroup(svc, securityGroup.GroupId)
+					return true
+				}
 			}
 		}
 	}
+	return false
 
 }
 

@@ -12,7 +12,7 @@ var sgCmd = &cobra.Command{
 	Short: "SecurityGroup Management",
 	Long:  `A SecurityGroup management command tool`,
 	Run: func(cmd *cobra.Command, args []string) {
-		startAWSSession(IP, Machine)
+		InsertIPOnSg(IP, Machine)
 	},
 }
 
