@@ -6,23 +6,62 @@ import (
 	restful "github.com/emicklei/go-restful"
 )
 
+type SSHTuple struct {
+	IP, Machine string
+}
+
 func CreateHTTPAPIHandler() http.Handler {
 	wsContainer := restful.NewContainer()
 	wsContainer.EnableContentEncoding(true)
 
 	apiV1Ws := new(restful.WebService)
 	wsContainer.Add(apiV1Ws)
-	apiV1Ws.Path("/api/v1")
+	apiV1Ws.Path("/api/v1").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
 
-	apiV1Ws.Route(
-		apiV1Ws.POST("/app").To(handleDeploy),
-	)
+	apiV1Ws.Route(apiV1Ws.POST("/add").To(handleAddIP).Reads(SSHTuple{}))
+	apiV1Ws.Route(apiV1Ws.DELETE("/").To(handleDelIP))
 	return wsContainer
-
 }
 
-func handleDeploy(request *restful.Request, response *restful.Response) {
-	IP := "teste"
-	Machine := "teste"
-	startAWSSession(IP, Machine)
+// TODO  - Broke validation
+func validadeEntity(ipTuple *SSHTuple, request *restful.Request, response *restful.Response) *restful.Response {
+	err := request.ReadEntity(&ipTuple)
+	if err != nil {
+		response.AddHeader("Content-Type", "application/json")
+		response.WriteErrorString(http.StatusInternalServerError, err.Error())
+	}
+	return response
+}
+
+func isValid(response *restful.Response) bool {
+	return response.StatusCode() == 200
+}
+func handleAddIP(request *restful.Request, response *restful.Response) {
+	ipTuple := new(SSHTuple)
+	response = validadeEntity(ipTuple, request, response)
+	if !isValid(response) {
+		return
+	}
+
+	inserted := InsertIPOnSG(ipTuple.IP, ipTuple.Machine)
+	if inserted {
+		response.WriteHeader(http.StatusCreated)
+	} else {
+		response.WriteHeader(http.StatusConflict)
+	}
+}
+
+func handleDelIP(request *restful.Request, response *restful.Response) {
+	ipTuple := new(SSHTuple)
+	response = validadeEntity(ipTuple, request, response)
+	if !isValid(response) {
+		return
+	}
+
+	deleted := deleteIPFromSG(ipTuple.IP, ipTuple.Machine)
+	if !deleted {
+		response.WriteHeader(http.StatusNotFound)
+	}
 }
