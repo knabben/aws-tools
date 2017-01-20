@@ -10,7 +10,8 @@ import (
 	"gopkg.in/redis.v5"
 )
 
-var client = redis.NewClient(&redis.Options{Addr: "localhost:6379", Password: "", DB: 0})
+var Redis string
+var client *redis.Client
 
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
@@ -19,6 +20,7 @@ var serveCmd = &cobra.Command{
 	Long:  `REST API to manage resources`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Subscribe for keyevents expired
+		client = redis.NewClient(&redis.Options{Addr: Redis, Password: "", DB: 0})
 		pubsub, err := client.Subscribe("__keyevent@0__:expired")
 		if err != nil {
 			panic(err)
@@ -48,4 +50,6 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(serveCmd)
+
+	RootCmd.Flags().StringVarP(&Redis, "redis", "r", "localhost:6379", "Redis URL")
 }
