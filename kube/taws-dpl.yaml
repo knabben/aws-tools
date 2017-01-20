@@ -29,4 +29,4 @@ spec:
                 key: aws_key
         ports:
         - containerPort: 8085
-        args: ["serve", "-r", "lolling-clam-redis.default:6379", "-p", "Y3F1f4XmsQ"]
+        args: ["serve", "-r", "boiling-shrimp-redis.monitoring:6379"]
