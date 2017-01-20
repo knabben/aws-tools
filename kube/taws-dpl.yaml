@@ -14,8 +14,19 @@ spec:
     spec:
       containers:
       - name: awstools
-        image: knabben/awstools:latest
+        image: knabben/aws-tools:1
+        imagePullPolicy: Always
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws
+                key: aws_access
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws
+                key: aws_key
         ports:
         - containerPort: 8085
-        args:
-          - "serve -r lolling-clam-redis:6379"
+        args: ["serve", "-r", "lolling-clam-redis.default:6379", "-p", "Y3F1f4XmsQ"]

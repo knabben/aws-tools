@@ -9,4 +9,4 @@ ADD . /app
 RUN go get -u -v github.com/knabben/aws-tools
 RUN go build main.go
 
-CMD ["./main"]
+ENTRYPOINT ["./main"]
