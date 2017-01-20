@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"net/http"
+	"time"
 
 	restful "github.com/emicklei/go-restful"
 )
@@ -38,6 +39,7 @@ func validadeEntity(ipTuple *SSHTuple, request *restful.Request, response *restf
 func isValid(response *restful.Response) bool {
 	return response.StatusCode() == 200
 }
+
 func handleAddIP(request *restful.Request, response *restful.Response) {
 	ipTuple := new(SSHTuple)
 	response = validadeEntity(ipTuple, request, response)
@@ -45,7 +47,13 @@ func handleAddIP(request *restful.Request, response *restful.Response) {
 		return
 	}
 
-	inserted := InsertIPOnSG(ipTuple.IP, ipTuple.Machine)
+	ip, machine := ipTuple.IP, ipTuple.Machine
+
+	err := client.Set(ip+"|"+machine, "true", time.Minute).Err()
+	if err != nil {
+		panic(err)
+	}
+	inserted := InsertIPOnSG(ip, machine)
 	if inserted {
 		response.WriteHeader(http.StatusCreated)
 	} else {

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -77,7 +76,6 @@ func IPExistsOnSecurityGroup(ip string, svc *ec2.EC2, securityGroup []*ec2.Group
 		GroupIds: []*string{aws.String(*securityGroup[0].GroupId)},
 	}
 	resp, err := svc.DescribeSecurityGroups(paramsSG)
-	fmt.Println(resp)
 	if err != nil {
 		panic(err)
 	}
