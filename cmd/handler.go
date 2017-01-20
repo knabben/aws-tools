@@ -49,7 +49,7 @@ func handleAddIP(request *restful.Request, response *restful.Response) {
 
 	ip, machine := ipTuple.IP, ipTuple.Machine
 
-	err := client.Set(ip+"|"+machine, "true", time.Month).Err()
+	err := client.Set(ip+"|"+machine, "true", time.Hour*24*30).Err()
 	if err != nil {
 		panic(err)
 	}
