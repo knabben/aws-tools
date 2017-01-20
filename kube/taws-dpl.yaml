@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: awstools
+  labels:
+    app: awstools
+  namespace: awstools
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: awstools
+    spec:
+      containers:
+      - name: awstools
+        image: knabben/awstools:latest
+        ports:
+        - containerPort: 8085
+        args:
+          - "serve -r lolling-clam-redis:6379"
