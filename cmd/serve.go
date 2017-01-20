@@ -51,5 +51,5 @@ var serveCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(serveCmd)
 
-	RootCmd.Flags().StringVarP(&Redis, "redis", "r", "localhost:6379", "Redis URL")
+	serveCmd.Flags().StringVarP(&Redis, "redis", "r", "localhost:6379", "Redis URL")
 }

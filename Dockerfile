@@ -6,8 +6,6 @@ RUN apk add curl git
 WORKDIR /app
 ADD . /app
 
-RUN curl https://glide.sh/get | sh
-
 RUN go get -u -v github.com/knabben/aws-tools
 RUN go build main.go
 
