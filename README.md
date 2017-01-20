@@ -1,11 +1,11 @@
 Fire starter
-----
+===
 
 This project makes easier to ADD or REMOVE the access of specifics IPs FROM specifics machines on AWS, via a REST API.
 
 
 Push to Dockerhub
-===
+---
 
 ```
 make build tag=1
@@ -17,7 +17,7 @@ kubectl create -f kube/*
 ```
 
 Run
-===
+---
 
 You need REDIS with Password enabled and an IAM key with EC2 permissions:
 
@@ -27,7 +27,7 @@ docker run -p 8085:8085 awstools:1 serve -r localhost:6379 -p redis
 You can access the REST api as follows:
 
 REST API
-===
+---
 
 All the machines are find by tag Names, and by default it enables port 22.
 
@@ -44,6 +44,6 @@ $ curl -v -XDELETE localhost:8085/api/v1/ -H "Content-Type: application/json" -d
 ```
 
 Redis Cache
-===
+---
 
 After Adding a new IP, it will have a TTL before being removed from the list. It is achieved by Redis PubSub system on events channels.
