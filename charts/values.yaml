@@ -1,0 +1,10 @@
+replicaCount: 1
+namespace: default
+image:
+  repository: knabben/aws-tools
+  tag: latest
+service:
+  name: nginx
+  type: ClusterIP
+  externalPort: 8085
+  internalPort: 8080

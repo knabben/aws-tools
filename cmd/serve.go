@@ -43,8 +43,9 @@ var serveCmd = &cobra.Command{
 			}
 		}()
 
+		http.HandleFunc("/ping/", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte{}) })
 		http.Handle("/api/", CreateHTTPAPIHandler())
-		log.Print(http.ListenAndServe(fmt.Sprintf(":%d", 8085), nil))
+		log.Print(http.ListenAndServe(fmt.Sprintf(":%d", 8080), nil))
 	},
 }
 

@@ -1,12 +1,17 @@
-FROM golang:1.7.4-alpine
+FROM golang:1.7
 
-RUN apk update
-RUN apk add curl git 
+ENV GOPATH /root/.go
+ENV PROJECT ${GOPATH}/src/github.com/knabben/aws-tools/
 
-WORKDIR /app
-ADD . /app
+RUN mkdir -p ${PROJECT}
+RUN mkdir -p ${GOPATH}/bin
+ENV PATH=${PATH}:${GOPATH}/bin
 
-RUN go get -u -v github.com/knabben/aws-tools
-RUN go build main.go
+ADD . ${PROJECT}
+WORKDIR ${PROJECT}
 
-ENTRYPOINT ["./main"]
+RUN curl https://glide.sh/get | sh
+RUN glide install
+RUN make compile
+
+CMD ["commands/run.sh"]
