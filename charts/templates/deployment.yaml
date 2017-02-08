@@ -27,6 +27,10 @@ spec:
               secretKeyRef:
                 name: consumer
                 key: awskey
+          - name: REDIS_URL
+            value: "{{ .Values.redisUrl }}"
+          - name: REDIS_PASS
+            value: "{{ .Values.redisPass }}"
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         livenessProbe:

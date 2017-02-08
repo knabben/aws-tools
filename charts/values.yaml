@@ -1,10 +1,12 @@
 replicaCount: 1
 namespace: default
+redisUrl: localhost:6379
+redisPass: pass
 image:
   repository: knabben/aws-tools
   tag: latest
 service:
-  name: nginx
+  name: awstools
   type: ClusterIP
   externalPort: 8085
   internalPort: 8080
